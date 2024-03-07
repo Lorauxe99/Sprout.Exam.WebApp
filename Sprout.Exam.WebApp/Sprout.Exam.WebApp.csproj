@@ -32,6 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\HelperLibrary\HelperLibrary.csproj" />
     <ProjectReference Include="..\Sprout.Exam.Business\Sprout.Exam.Business.csproj" />
   </ItemGroup>
 
