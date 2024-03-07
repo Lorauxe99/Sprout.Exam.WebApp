@@ -1,5 +1,5 @@
-Q: If we are going to deploy this on production, what do you think is the next improvement that you will prioritize next? This can be a feature, a tech debt, or an architectural design.
-A: I have many ideas regarding the next improvements but I would like to prioritize setting up the EntityFramework for the Employees Table. So that we can easily modify its columns whenever necessary.
+* Q: If we are going to deploy this on production, what do you think is the next improvement that you will prioritize next? This can be a feature, a tech debt, or an architectural design.
+* A: I have many ideas regarding the next improvements but I would like to prioritize setting up the EntityFramework for the Employees Table. So that we can easily modify its columns whenever necessary.
 I've listed below some incremental improvements along the way (starting from top to bottom).
 
 TechDebt
