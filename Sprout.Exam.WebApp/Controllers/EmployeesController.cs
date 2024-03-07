@@ -34,8 +34,15 @@ namespace Sprout.Exam.WebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var result = await Task.FromResult(DatabaseHelper.GetEmployees(_connString));
-            return Ok(result.Result);
+            try
+            {
+                var result = await Task.FromResult(DatabaseHelper.GetEmployees(_connString));
+                return Ok(result.Result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         /// <summary>
@@ -45,8 +52,15 @@ namespace Sprout.Exam.WebApp.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var result = await Task.FromResult(DatabaseHelper.GetEmployee(_connString, id));
-            return Ok(result.Result);
+            try
+            {
+                var result = await Task.FromResult(DatabaseHelper.GetEmployee(_connString, id));
+                return Ok(result.Result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         /// <summary>
@@ -56,15 +70,24 @@ namespace Sprout.Exam.WebApp.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(EditEmployeeDto input)
         {
-            var item = await Task.FromResult(DatabaseHelper.UpdateEmployee(_connString, input));
-            if (item == null) return NotFound();
-            /*
-            item.FullName = input.FullName;
-            item.Tin = input.Tin;
-            item.Birthdate = input.Birthdate.ToString("yyyy-MM-dd");
-            item.TypeId = input.TypeId;
-            */
-            return Ok(item.Result);
+            try
+            {
+
+
+                var item = await Task.FromResult(DatabaseHelper.UpdateEmployee(_connString, input));
+                if (item == null) return NotFound();
+                /*
+                item.FullName = input.FullName;
+                item.Tin = input.Tin;
+                item.Birthdate = input.Birthdate.ToString("yyyy-MM-dd");
+                item.TypeId = input.TypeId;
+                */
+                return Ok(item.Result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         /// <summary>
@@ -74,20 +97,26 @@ namespace Sprout.Exam.WebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(CreateEmployeeDto input)
         {
-
-            var id = await Task.FromResult(DatabaseHelper.CreateEmployee(_connString, input));
-            /*
-            StaticEmployees.ResultList.Add(new EmployeeDto
+            try
             {
-                Birthdate = input.Birthdate.ToString("yyyy-MM-dd"),
-                FullName = input.FullName,
-                Id = id,
-                Tin = input.Tin,
-                TypeId = input.TypeId
-            });
-            */
+                var id = await Task.FromResult(DatabaseHelper.CreateEmployee(_connString, input));
+                /*
+                StaticEmployees.ResultList.Add(new EmployeeDto
+                {
+                    Birthdate = input.Birthdate.ToString("yyyy-MM-dd"),
+                    FullName = input.FullName,
+                    Id = id,
+                    Tin = input.Tin,
+                    TypeId = input.TypeId
+                });
+                */
 
-            return Created($"/api/employees/{id.Result}", id.Result);
+                return Created($"/api/employees/{id.Result}", id.Result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
 
@@ -98,10 +127,18 @@ namespace Sprout.Exam.WebApp.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var result = await Task.FromResult(DatabaseHelper.DeleteEmployee(_connString, id));
-            if (result == null) return NotFound();
-            //StaticEmployees.ResultList.RemoveAll(m => m.Id == id);
-            return Ok(id);
+            try
+            {
+                var result = await Task.FromResult(DatabaseHelper.DeleteEmployee(_connString, id));
+                if (result == null)
+                    return NotFound();
+                return Ok(id);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        
         }
 
 

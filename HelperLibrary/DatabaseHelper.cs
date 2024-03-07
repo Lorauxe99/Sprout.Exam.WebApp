@@ -95,7 +95,7 @@ namespace Helper
                                 {
                                     Id = Convert.ToInt32(reader[0]),
                                     FullName = Convert.ToString(reader[1]),
-                                    Birthdate = Convert.ToString(reader[2]),
+                                    Birthdate = Convert.ToDateTime(reader[2]).ToString("yyyy-MM-dd"),
                                     Tin = Convert.ToString(reader[3]),
                                     TypeId = Convert.ToInt32(reader[4])
                                 };
