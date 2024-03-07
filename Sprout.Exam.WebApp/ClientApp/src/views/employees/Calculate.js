@@ -102,10 +102,25 @@ export class EmployeeCalculate extends Component {
         method: 'POST',
         headers: !token ? {} : { 'Authorization': `Bearer ${token}`,'Content-Type': 'application/json' },
         body: JSON.stringify({id: this.state.id,absentDays: this.state.absentDays,workedDays: this.state.workedDays})
-    };
-    const response = await fetch('api/employees/' + this.state.id + '/calculate',requestOptions);
-    const data = await response.json();
-    this.setState({ loadingCalculate: false,netIncome: data });
+      };
+
+      await fetch('api/employees/' + this.state.id + '/calculate', requestOptions)
+          .then(response => {
+              if (!response.ok) {
+                  return response.text()
+                      .then(text => { throw new Error(text) });
+              }
+              else {
+                  return response.json();
+              };
+          })
+          .then(data => {
+              this.setState({ loadingCalculate: false, netIncome: data.toFixed(2) });
+          })
+          .catch(error => {
+              alert(error);
+              this.setState({ loading: false, loadingCalculate: false });
+          })    
   }
 
   async getEmployee(id) {

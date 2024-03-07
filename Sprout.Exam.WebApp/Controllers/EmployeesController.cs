@@ -10,6 +10,9 @@ using Sprout.Exam.Common.Enums;
 using Helper;
 using Sprout.Exam.WebApp.Data;
 using Microsoft.Extensions.Configuration;
+using Sprout.Exam.Business.FactoryUtil;
+using Sprout.Exam.Business.FactoryUtil.Products;
+using Sprout.Exam.Business.FactoryUtil.ConcreteCreators;
 
 namespace Sprout.Exam.WebApp.Controllers
 {
@@ -111,24 +114,46 @@ namespace Sprout.Exam.WebApp.Controllers
         /// <param name="workedDays"></param>
         /// <returns></returns>
         [HttpPost("{id}/calculate")]
-        public async Task<IActionResult> Calculate(int id, decimal absentDays, decimal workedDays)
+        public async Task<IActionResult> Calculate(PayrollDto payrollInfo)
         {
-            var result = await Task.FromResult(StaticEmployees.ResultList.FirstOrDefault(m => m.Id == id));
-
-            if (result == null) return NotFound();
-            var type = (EmployeeType)result.TypeId;
-            return type switch
+            if(payrollInfo.AbsentDays < 0)
             {
-                EmployeeType.Regular =>
-                    //create computation for regular.
-                    Ok(25000),
-                EmployeeType.Contractual =>
-                    //create computation for contractual.
-                    Ok(20000),
-                _ => NotFound("Employee Type not found")
-            };
+                return UnprocessableEntity("Absent Days cannot be less than 0");
+            }
 
+            if(payrollInfo.WorkedDays < 0)
+            {
+                return UnprocessableEntity("Worked Days cannot be less than 0");
+            }
+
+            try
+            {
+
+                var result = await Task.FromResult(DatabaseHelper.GetEmployee(_connString, payrollInfo.Id));
+
+                if (result.Result == null) return NotFound();
+
+                var type = (EmployeeType)result.Result.TypeId;
+                IPayroll payroll = null;
+                switch (type)
+                {
+                    case EmployeeType.Regular:
+                        payroll = new RegularFactory().GetEmployeePayroll();
+                        return Ok(payroll.GetMonthSalary(payrollInfo.AbsentDays));
+                    case EmployeeType.Contractual:
+                        payroll = new ContractualFactory().GetEmployeePayroll();
+                        return Ok(payroll.GetMonthSalary(payrollInfo.WorkedDays));
+                    default:
+                        return NotFound("Employee Type not found");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
+
 
     }
 }
